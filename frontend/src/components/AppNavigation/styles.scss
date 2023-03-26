@@ -1,0 +1,42 @@
+$border: 1px solid #dddddd;
+$activeColor: forestgreen;
+
+.AppNavigation {
+  border-right: $border;
+  cursor: pointer;
+
+  .Item {
+    border-bottom: $border;
+    display: flex;
+    align-items: center;
+    padding: 1em;
+    font-weight: 600;
+
+    > div {
+      margin-right: 0.5em;
+    }
+
+    .Icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .Label {
+      width: 200px;
+      min-width: 200px;
+      max-width: 300px;
+    }
+
+    &__selected {
+      color: $activeColor;
+      background-color: #f5f5f5;
+
+      svg {
+        fill: $activeColor;
+      }
+    }
+  }
+}
