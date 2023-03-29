@@ -1,12 +1,12 @@
-import { Stack } from '@shopify/polaris'
+import { LegacyStack } from '@shopify/polaris'
 import React from 'react'
-import AppHeader from '../../components/AppHeader'
+import Header from '../../components/Header'
 
 function NewPage(props) {
   return (
-    <Stack vertical alignment="fill">
-      <AppHeader title="Add new product" onBack={() => props.navigate('/products')} />
-    </Stack>
+    <LegacyStack vertical alignment="fill">
+      <Header title="Add new product" onBack={() => props.navigate('/products')} />
+    </LegacyStack>
   )
 }
 

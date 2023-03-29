@@ -1,13 +1,13 @@
 import { LegacyStack } from '@shopify/polaris'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Header from '../../components/Header'
 
-function IndexPage(props) {
+function NewPage(props) {
   return (
     <LegacyStack vertical alignment="fill">
-      <Header title="Home" />
+      <Header title="Add new country" onBack={() => props.navigate('/countries')} />
     </LegacyStack>
   )
 }
 
-export default IndexPage
+export default NewPage

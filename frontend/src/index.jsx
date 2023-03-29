@@ -2,9 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import reportWebVitals from './reportWebVitals'
 import { BrowserRouter } from 'react-router-dom'
-import App from './App'
 import enTranslations from '@shopify/polaris/locales/en.json'
 import { AppProvider, Frame } from '@shopify/polaris'
+import { Provider } from 'react-redux'
+import store from './redux/store'
+import AppStore from './AppStore'
 
 import './global.scss'
 import '@shopify/polaris/build/esm/styles.css'
@@ -12,11 +14,13 @@ import '@shopify/polaris/build/esm/styles.css'
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <BrowserRouter>
-    <AppProvider i18n={enTranslations}>
-      <Frame>
-        <App />
-      </Frame>
-    </AppProvider>
+    <Provider store={store}>
+      <AppProvider i18n={enTranslations}>
+        <Frame>
+          <AppStore />
+        </Frame>
+      </AppProvider>
+    </Provider>
   </BrowserRouter>
 )
 

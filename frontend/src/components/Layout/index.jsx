@@ -1,12 +1,12 @@
 import { Stack } from '@shopify/polaris'
-import AppNavigation from '../AppNavigation'
+import Navigation from '../Navigation'
 
 function Layout(props) {
-  const { children, routes } = props
+  const { children } = props
 
   return (
     <div style={{ display: 'flex', flexWrap: 'nowrap' }}>
-      <AppNavigation routes={routes} />
+      <Navigation {...props} />
       <div style={{ flex: 1 }}>{children}</div>
     </div>
   )
