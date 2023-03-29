@@ -1,12 +1,12 @@
 import ResponseHandler from '../helpers/responseHandler.js'
-import Service from '../services/country.js'
+import Country from '../middlewares/country.js'
 
 export default {
   count: async (req, res) => {
     try {
       let where = JSON.parse(req.query.where || '{}')
 
-      const data = await Service.count(where)
+      const data = await Country.count(where)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -19,7 +19,7 @@ export default {
       let filter = { ...req.query }
       filter.where = filter.where ? JSON.parse(filter.where) : {}
 
-      const data = await Service.find(filter)
+      const data = await Country.find(filter)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -31,7 +31,7 @@ export default {
     try {
       const { id } = req.params
 
-      const data = await Service.findById(id)
+      const data = await Country.findById(id)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -41,7 +41,7 @@ export default {
 
   create: async (req, res) => {
     try {
-      const data = await Service.create(req.body)
+      const data = await Country.create(req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -53,7 +53,7 @@ export default {
     try {
       const { id } = req.params
 
-      const data = await Service.update(id, req.body)
+      const data = await Country.update(id, req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -65,7 +65,7 @@ export default {
     try {
       const { id } = req.params
 
-      await Service.delete(id)
+      await Country.delete(id)
 
       return ResponseHandler.success(res)
     } catch (error) {

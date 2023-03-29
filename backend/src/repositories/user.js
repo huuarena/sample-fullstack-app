@@ -33,6 +33,7 @@ const login = async ({ username, password }) => {
 
     return { user: user.toJSON(), token: `Bearer ${token}` }
   } catch (error) {
+    console.log('login error :>> ', error)
     throw error
   }
 }
@@ -53,127 +54,106 @@ const getByToken = async (token) => {
 
     throw new Error(ErrorCodes.UNAUTHORIZED)
   } catch (error) {
+    console.log('getByToken error :>> ', error)
     throw new Error(ErrorCodes.UNAUTHORIZED)
   }
 }
 
 const count = async (where) => {
-  try {
-    return await Model.count(where)
-  } catch (error) {
-    throw error
-  }
+  return await Model.count(where)
 }
 
-const find = async ({ page, limit, where, keyword, gender, country, role }) => {
-  try {
-    let _page = page >= 1 ? page : 1
-    let _limit = limit >= 1 ? limit : 25
-    let _where = where || {}
+const find = async ({ page, limit, where, keyword, country, gender }) => {
+  let _page = page >= 1 ? page : 1
+  let _limit = limit >= 1 && limit <= 100 ? limit : 25
+  let _where = where || {}
 
-    if (keyword) {
-      _where = {
-        [Op.or]: [
-          {
-            firstName: {
-              [Op.like]: `%${keyword}%`,
-            },
+  if (keyword) {
+    _where = {
+      [Op.or]: [
+        {
+          firstName: {
+            [Op.like]: `%${keyword}%`,
           },
-          {
-            lastName: {
-              [Op.like]: `%${keyword}%`,
-            },
+        },
+        {
+          lastName: {
+            [Op.like]: `%${keyword}%`,
           },
-          {
-            email: {
-              [Op.like]: `%${keyword}%`,
-            },
+        },
+        {
+          email: {
+            [Op.like]: `%${keyword}%`,
           },
-        ],
-      }
+        },
+        {
+          phone: {
+            [Op.like]: `%${keyword}%`,
+          },
+        },
+      ],
     }
-    if ('' + gender === 'true' || '' + gender === 'false') {
-      _where = { ..._where, gender }
-    }
-    if (country) {
-      _where = { ..._where, countryId: country }
-    }
-    if (role) {
-      _where = { ..._where, role: role.toUpperCase() }
-    }
+  }
+  if (country) {
+    _where = { ..._where, countryId: country }
+  }
+  if ('' + gender === 'true' || '' + gender === 'false') {
+    _where = { ..._where, gender }
+  }
 
-    let filter = {
-      where: _where,
-      limit: _limit,
-      offset: (_page - 1) * _limit,
-      order: [['updatedAt', 'DESC']],
-      include,
-    }
+  let filter = {
+    where: _where,
+    limit: _limit,
+    offset: (_page - 1) * _limit,
+    order: [['updatedAt', 'DESC']],
+    include,
+  }
 
-    const count = await Model.count({ where: _where })
-    const items = await Model.findAll(filter)
+  const count = await Model.count({ where: _where })
+  const items = await Model.findAll(filter)
 
-    return {
-      items: items.map((item) => item.toJSON()),
-      ...generatePagination(_page, _limit, count),
-    }
-  } catch (error) {
-    throw error
+  return {
+    items: items.map((item) => item.toJSON()),
+    ...generatePagination(_page, _limit, count),
   }
 }
 
 const findById = async (id) => {
-  try {
-    const entry = await Model.findOne({ where: { id }, include })
-    if (!entry) {
-      throw new Error(ErrorCodes.NOT_FOUND)
-    }
-
-    return entry.toJSON()
-  } catch (error) {
-    throw error
+  const entry = await Model.findOne({ where: { id }, include })
+  if (!entry) {
+    throw new Error(ErrorCodes.NOT_FOUND)
   }
+
+  return entry.toJSON()
 }
 
 const create = async (data) => {
-  try {
-    if (!data.password) {
-      throw new Error('Password cannot be blank')
-    }
-
-    // generate password encode
-    const salt = bcrypt.genSaltSync(10)
-    const passwordEncode = bcrypt.hashSync(data.password, salt)
-    data.password = passwordEncode
-
-    const created = await Model.create(data)
-
-    return created.toJSON()
-  } catch (error) {
-    throw error
+  if (!data.password) {
+    throw new Error('Password cannot be blank')
   }
+
+  // generate password encode
+  const salt = bcrypt.genSaltSync(10)
+  const passwordEncode = bcrypt.hashSync(data.password, salt)
+  data.password = passwordEncode
+
+  const created = await Model.create(data)
+
+  return created.toJSON()
 }
 
 const update = async (id, data) => {
-  try {
-    const updated = await Model.update(data, {
-      where: { id },
-      returning: true,
-      plain: true,
-    })
+  const updated = await Model.update(data, {
+    where: { id },
+    returning: true,
+    plain: true,
+  })
 
-    return await findById(id)
-  } catch (error) {
-    throw error
-  }
+  return await findById(id)
 }
 
 const _delete = async (id) => {
-  try {
-    return await Model.destroy({ where: { id } })
-  } catch (error) {
-    throw error
-  }
+  return await Model.destroy({ where: { id } })
 }
 
 export default {

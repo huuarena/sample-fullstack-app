@@ -4,7 +4,7 @@
  * @param {Object} data
  * @returns Object
  */
-const success = (res, data = {}) => {
+const success = (res, data = undefined) => {
   return res.status(200).json({
     success: true,
     data,
@@ -18,9 +18,12 @@ const success = (res, data = {}) => {
  * @returns Object
  */
 const error = (res, error, status = 200) => {
+  let message = error?.errors?.[0]?.message || error?.message
+  message = message.replace(/"/g, '').replace(/'/g, '')
+
   return res.status(status).json({
     success: false,
-    error: { message: error?.errors?.[0]?.message || error?.message },
+    error: { message },
   })
 }
 

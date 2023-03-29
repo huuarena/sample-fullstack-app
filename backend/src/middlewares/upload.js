@@ -1,6 +1,6 @@
 import CloudinaryUploader from '../connector/cloudinary/index.js'
 
-export default {
+const Upload = {
   upload: async (files) => {
     try {
       let result = [],
@@ -9,12 +9,15 @@ export default {
       // upload to cloudinary
       for (let i = 0; i < files.length; i++) {
         uploaded = await CloudinaryUploader.upload(files[i])
-        result.push({ url: uploaded.url })
+        result.push(uploaded)
       }
 
       return result
     } catch (error) {
+      console.log('upload error :>> ', error)
       throw error
     }
   },
 }
+
+export default Upload

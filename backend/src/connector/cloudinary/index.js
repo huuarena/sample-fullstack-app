@@ -14,12 +14,12 @@ cloudinary.config({
 
 const CloudinaryUploader = {
   upload: async (file) => {
-    console.log(`🚀 ~ cloudinary uploading...`)
+    console.log(`cloudinary uploading...`)
     return await cloudinary.v2.uploader
       .upload(file.path, { folder: CLOUDINARY_FOLDER })
       .then((result) => {
         fs.unlinkSync(file.path)
-        return result
+        return { url: result.url }
       })
   },
 }

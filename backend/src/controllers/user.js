@@ -1,11 +1,11 @@
 import ErrorCodes from '../constants/errorCodes.js'
 import ResponseHandler from '../helpers/responseHandler.js'
-import Service from '../services/user.js'
+import User from '../middlewares/user.js'
 
 export default {
   login: async (req, res) => {
     try {
-      const data = await Service.login(req.body)
+      const data = await User.login(req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -17,7 +17,7 @@ export default {
     try {
       const { authorization } = req.headers
 
-      const data = await Service.getByToken(authorization)
+      const data = await User.getByToken(authorization)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -29,7 +29,7 @@ export default {
     try {
       let where = JSON.parse(req.query.where || '{}')
 
-      const data = await Service.count(where)
+      const data = await User.count(where)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -42,7 +42,7 @@ export default {
       let filter = { ...req.query }
       filter.where = filter.where ? JSON.parse(filter.where) : {}
 
-      const data = await Service.find(filter)
+      const data = await User.find(filter)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -54,7 +54,7 @@ export default {
     try {
       const { id } = req.params
 
-      const data = await Service.findById(id)
+      const data = await User.findById(id)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -64,7 +64,7 @@ export default {
 
   create: async (req, res) => {
     try {
-      const data = await Service.create(req.body)
+      const data = await User.create(req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -77,13 +77,13 @@ export default {
       const { authorization } = req.headers
       const { id } = req.params
 
-      const session = await Service.getByToken(authorization)
+      const session = await User.getByToken(authorization)
 
       if (session.id != id) {
         throw new Error(ErrorCodes.UNAUTHORIZED)
       }
 
-      const data = await Service.update(id, req.body)
+      const data = await User.update(id, req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -95,7 +95,7 @@ export default {
     try {
       const { id } = req.params
 
-      await Service.delete(id)
+      await User.delete(id)
 
       return ResponseHandler.success(res)
     } catch (error) {

@@ -40,7 +40,7 @@ const Model = PostgresSequelize.define('users', {
     type: DataTypes.DATEONLY,
   },
   role: {
-    type: DataTypes.ENUM('GUEST', 'MEMBERSHIP', 'ADMIN'),
+    type: DataTypes.STRING, // GUEST, ADMIN, MEMBERSHIP
     defaultValue: 'GUEST',
   },
   avatar: {
@@ -79,7 +79,6 @@ Model.prototype.toJSON = function () {
   let values = Object.assign({}, this.get())
 
   delete values.password
-  delete values.countryId
 
   values.country = values.country ? values.country.toJSON() : values.country
 
