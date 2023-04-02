@@ -37,11 +37,15 @@ function CreateForm(props) {
 
   const [formData, setFormData] = useState(null)
 
+  useEffect(() => console.log('formData :>> ', formData), [formData])
+
   useEffect(() => {
     let _formData = JSON.parse(JSON.stringify(InitFormData))
 
     if (created.id) {
-      ;['name'].map((key) => (_formData[key] = { ..._formData[key], value: created[key] || '' }))
+      Array.from(['name']).forEach(
+        (field) => (_formData[field] = { ..._formData[field], value: created[field] || '' })
+      )
     }
 
     setFormData(_formData)
@@ -68,6 +72,7 @@ function CreateForm(props) {
       let data = {
         name: validFormData.name.value,
       }
+      console.log('data :>> ', data)
 
       let res = null
       if (created.id) {
@@ -81,7 +86,7 @@ function CreateForm(props) {
 
       actions.showNotify({ message: created.id ? 'Saved' : 'Created' })
 
-      actions.getCountries()
+      props.navigate(`countries/${res.data.id}`)
     } catch (error) {
       console.log(error)
       actions.showNotify({ error: true, message: error.message })
@@ -95,7 +100,7 @@ function CreateForm(props) {
   return (
     <LegacyStack vertical alignment="fill">
       <LegacyCard sectioned>
-        <LegacyStack vertical alignment="fill">
+        <LegacyStack vertical alignment="fill" spacing="extraLoose">
           <LegacyStack distribution="fillEvenly">
             <LegacyStack.Item fill>
               <FormControl

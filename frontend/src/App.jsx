@@ -9,8 +9,11 @@ function App(props) {
   const { actions, appLoading, notify } = props
 
   useEffect(() => {
-    console.log(`redux`)
-    Object.keys(props).forEach((key) => console.log(` | ${key} :`, props[key]))
+    console.log('redux :>> ', props)
+
+    if (!props.countries?.length) {
+      actions.getCountries()
+    }
   }, [props])
 
   const toastMarkup = notify?.show && (

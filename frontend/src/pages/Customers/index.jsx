@@ -1,10 +1,11 @@
 import { LegacyStack } from '@shopify/polaris'
 import React, { useEffect, useState } from 'react'
-import CountryApi from '../../apis/country'
+import CustomerApi from '../../apis/customer'
 import Header from '../../components/Header'
 import Table from './Table'
 import qs from 'query-string'
 import { useSearchParams } from 'react-router-dom'
+import CountryApi from '../../apis/country'
 
 function IndexPage(props) {
   const { actions } = props
@@ -13,14 +14,15 @@ function IndexPage(props) {
 
   const { page, limit, search } = qs.parse(props.location.search)
 
-  const [countries, setCountries] = useState(null)
+  const [customers, setCustomers] = useState(null)
+  const [countries, setCountries] = useState([])
 
-  const getCountries = async ({ page = 1, limit = 10, search = '' }) => {
+  const getCustomers = async ({ page = 1, limit = 10, search = '' }) => {
     try {
       let query = qs.stringify({ page, limit, search })
-      let res = await CountryApi.find(query)
+      let res = await CustomerApi.find(query)
       if (!res.success) throw res.error
-      setCountries(res.data)
+      setCustomers(res.data)
       setSearchParams(query)
     } catch (error) {
       console.log(error)
@@ -28,20 +30,32 @@ function IndexPage(props) {
     }
   }
 
+  const getCountries = async () => {
+    try {
+      let res = await CountryApi.getAll()
+      if (!res.success) throw res.error
+      setCountries(res.data)
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    }
+  }
+
   useEffect(() => {
-    getCountries({ page, limit, search })
+    getCustomers({ page, limit, search })
+    getCountries()
   }, [])
 
   const handleDelete = async (deleted) => {
     try {
       actions.showAppLoading()
 
-      let res = await CountryApi.delete(deleted.id)
+      let res = await CustomerApi.delete(deleted.id)
       if (!res.success) throw res.error
 
       actions.showNotify({ message: 'Deleted' })
 
-      getCountries({ page, limit, search })
+      getCustomers({ page, limit, search })
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
@@ -53,11 +67,11 @@ function IndexPage(props) {
   return (
     <LegacyStack vertical alignment="fill">
       <Header
-        title="Countries"
+        title="Customers"
         actions={[
           {
-            label: 'Add new country',
-            onClick: () => props.navigate('/countries/new'),
+            label: 'Add new customer',
+            onClick: () => props.navigate('/customers/new'),
             primary: true,
           },
         ]}
@@ -65,12 +79,13 @@ function IndexPage(props) {
 
       <Table
         {...props}
-        data={countries}
-        onChangePage={(page) => getCountries({ page, limit, search })}
-        onChangeLimit={(limit) => getCountries({ page: 1, limit, search })}
+        data={customers}
+        countries={countries}
+        onChangePage={(page) => getCustomers({ page, limit, search })}
+        onChangeLimit={(limit) => getCustomers({ page: 1, limit, search })}
         search={search}
-        onSearch={(search) => getCountries({ page: 1, limit, search })}
-        onEdit={(item) => props.navigate(`countries/${item.id}`)}
+        onSearch={(search) => getCustomers({ page: 1, limit, search })}
+        onEdit={(item) => props.navigate(`customers/${item.id}`)}
         onDelete={handleDelete}
       />
     </LegacyStack>

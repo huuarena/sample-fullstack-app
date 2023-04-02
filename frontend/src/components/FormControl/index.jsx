@@ -33,20 +33,17 @@ function FormControl(props) {
       return (
         <LegacyStack vertical spacing="extraTight">
           {label && <LegacyStack.Item>{label}</LegacyStack.Item>}
-          <LegacyStack.Item>
-            <LegacyStack>
-              {props.options?.length > 0 &&
-                props.options.map((item, index) => (
-                  <LegacyStack.Item key={index}>
-                    <RadioButton
-                      label={item.label}
-                      checked={Boolean(item.value === value)}
-                      onChange={() => props.onChange?.(item.value)}
-                    />
-                  </LegacyStack.Item>
-                ))}
-            </LegacyStack>
-          </LegacyStack.Item>
+          <LegacyStack>
+            {props.options?.length > 0 &&
+              props.options.map((item, index) => (
+                <RadioButton
+                  key={index}
+                  label={item.label}
+                  checked={item.value === props.value}
+                  onChange={() => props.onChange?.(item.value)}
+                />
+              ))}
+          </LegacyStack>
         </LegacyStack>
       )
 

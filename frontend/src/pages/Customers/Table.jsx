@@ -8,6 +8,7 @@ import {
   LegacyCard,
   Pagination,
   Select,
+  Thumbnail,
 } from '@shopify/polaris'
 import { MobileVerticalDotsMajor } from '@shopify/polaris-icons'
 import qs from 'query-string'
@@ -15,6 +16,7 @@ import { useEffect, useState } from 'react'
 import CountryApi from '../../apis/country'
 import ConfirmModal from '../../components/ConfirmModal'
 import Search from './Search'
+import Image from '../../assets/images'
 
 Table.propTypes = {
   // ...appProps,
@@ -48,9 +50,26 @@ function Table(props) {
   if (items?.length > 0) {
     rows = items.map((item, index) => [
       (page - 1) * limit + index + 1,
-      <h3>
-        <b>{item.name}</b>
-      </h3>,
+      <LegacyStack spacing="tight" wrap={false}>
+        <Thumbnail
+          size="small"
+          source={item.avatar || Image.photo_placeholder}
+          alt={item.fullName}
+        />
+        <div>
+          <h3>
+            <b>{item.fullName}</b>
+          </h3>
+          <p>
+            <i>{item.username}</i>
+          </p>
+        </div>
+      </LegacyStack>,
+      <div>
+        <p>{item.email}</p>
+        <p>{item.phone}</p>
+      </div>,
+      <div>{item.country?.name || ''}</div>,
       <LegacyStack distribution="trailing">
         <Popover
           active={item.id === selected?.id}
@@ -91,8 +110,8 @@ function Table(props) {
 
       <LegacyCard>
         <DataTable
-          headings={['No.', 'Name', 'Actions']}
-          columnContentTypes={['text', 'text', 'numeric']}
+          headings={['No.', 'Fullname', 'Contact', 'Country', 'Actions']}
+          columnContentTypes={['text', 'text', 'text', 'text', 'text', 'numeric']}
           rows={rows}
           footerContent={items ? (items?.length > 0 ? undefined : 'Have no data') : 'loading..'}
         />

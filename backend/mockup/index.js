@@ -1,64 +1,81 @@
-const apiCaller = async ({ endpoint, method, data }) => {
-  return await fetch('http://localhost:5000/api/' + endpoint, {
+const apiCaller = async (endpoint, method, data) => {
+  let res = await fetch('http://localhost:5000/api/' + endpoint, {
     method: method || 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
     body: data ? JSON.stringify(data) : null,
   }).then((response) => response.json())
+  if (!res.success) throw res.error
+  return res.data
 }
 
-const initCountries = async () => {
-  try {
-    console.log(`👉 Init countries`)
+const getAll = async (uid) => {
+  let res = null,
+    items = [],
+    page = 1
 
-    // let count = await apiCaller({ endpoint: 'countries/count' }).then((res) => res.data)
-    // if (count > 0) {
-    //   console.log(`\t Countries already exist!`)
-    //   return
-    // }
+  while (page >= 1) {
+    res = await apiCaller(`${uid}?page=${page}&limit=100`)
+    items = items.concat(res.items)
 
-    for (let i = 0, leng = window.data.countries.length; i < leng; i++) {
-      await apiCaller({ endpoint: 'countries', method: 'POST', data: countries[i] })
-        .then((res) => console.log(`\t [${i + 1}/${leng}] country created`))
-        .catch((err) => console.log(`\t [${i + 1}/${leng}] create country failed: ${err.message}`))
-    }
-  } catch (error) {
-    alert(error.error)
+    page = res.page < res.totalPages ? page + 1 : -1
+  }
+
+  return items
+}
+
+const initCountries = async (uid) => {
+  let items = []
+
+  console.log(`👉 Init ${uid}`)
+
+  console.log(`delete ${uid}`)
+  items = await getAll(uid)
+  for (const item of items) {
+    apiCaller(`${uid}/${item.id}`, 'DELETE')
+      .then((data) => console.log(`\t ${uid} ${item.name} deleted`))
+      .catch((err) => console.log(`\t delete ${uid} ${item.id} failed:`, err.message))
+  }
+
+  console.log(`create ${uid}`)
+  items = window.data.countries
+  for (const item of items) {
+    apiCaller(uid, 'POST', item)
+      .then((data) => console.log(`\t ${uid} ${item.name} created`))
+      .catch((err) => console.log(`\t create ${uid} ${item.name} failed:`, err.message))
   }
 }
 
-const initUsers = async () => {
-  try {
-    console.log(`👉 Init users`)
+const initUsers = async (uid) => {
+  let items = []
 
-    // let count = await apiCaller({ endpoint: 'users/count' }).then((res) => res.data)
-    // if (count > 0) {
-    //   console.log(`\t Countries already exist!`)
-    //   return
-    // }
+  console.log(`👉 Init ${uid}`)
 
-    let countries = await apiCaller({ endpoint: 'countries' }).then((res) => res.data)
-    countries = countries.items
+  console.log(`delete ${uid}`)
+  items = await getAll(uid)
+  for (const item of items) {
+    apiCaller(`${uid}/${item.id}`, 'DELETE')
+      .then((data) => console.log(`\t ${uid} ${item.email} deleted`))
+      .catch((err) => console.log(`\t delete ${uid} ${item.email} failed:`, err.message))
+  }
 
-    for (let i = 0, leng = users.length; i < leng; i++) {
-      await apiCaller({
-        endpoint: 'users',
-        method: 'POST',
-        data: {
-          ...users[i],
-          countryId: countries[Math.floor(Math.random() * countries.length)].id,
-        },
-      })
-        .then((res) => console.log(`\t [${i + 1}/${leng}] user created`))
-        .catch((err) => console.log(`\t [${i + 1}/${leng}] create user failed: ${err.message}`))
-    }
-  } catch (error) {
-    alert(error.error)
+  let countries = await apiCaller('countries').then((res) => res.items)
+
+  console.log(`create ${uid}`)
+  items = window.data.users
+  for (const item of items) {
+    apiCaller(uid, 'POST', {
+      ...item,
+      countryId: countries[Math.floor(Math.random() * countries.length)].id,
+    })
+      .then((data) => console.log(`\t ${uid} ${item.email} created`))
+      .catch((err) => console.log(`\t create ${uid} ${item.email} failed:`, err.message))
   }
 }
 
 window.mockup = async () => {
-  await initCountries()
-  await initUsers()
+  await initCountries(`countries`)
+  await initUsers(`users`)
+  await initUsers(`customers`)
 }

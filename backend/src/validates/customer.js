@@ -5,9 +5,9 @@ const schemaDefine = {
   firstName: Joi.string().trim().required().min(1).max(30),
   lastName: Joi.string().trim().required().min(1).max(30),
   email: Joi.string().trim().required().min(1).max(50).email(),
-  phone: Joi.string().trim().required().min(1).max(50),
   username: Joi.string().trim().required().min(1).max(50),
   password: Joi.string().required().min(8).max(50),
+  phone: Joi.string().required().min(8).max(50),
   gender: Joi.any(),
   birthday: Joi.any(),
   avatar: Joi.any(),
@@ -57,20 +57,6 @@ export default {
         'photos',
         'countryId',
       ]).forEach((key) => (schema[key] = schemaDefine[key]))
-      schema = Joi.object(schema)
-
-      await schema.validateAsync(req.body)
-
-      next()
-    } catch (error) {
-      return ResponseHandler.error(res, error)
-    }
-  },
-
-  login: async (req, res, next) => {
-    try {
-      let schema = {}
-      Array.from(['username', 'password']).forEach((key) => (schema[key] = schemaDefine[key]))
       schema = Joi.object(schema)
 
       await schema.validateAsync(req.body)

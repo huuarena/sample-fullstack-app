@@ -1,7 +1,6 @@
-import Repository from '../repositories/country.js'
+import Repository from '../repositories/customer.js'
 
-const Country = {
-  getAll: async () => await Repository.getAll(),
+const Customer = {
   count: async (where) => await Repository.count(where),
   find: async (filter) => await Repository.find(filter),
   findById: async (id) => await Repository.findById(id),
@@ -10,4 +9,4 @@ const Country = {
   delete: async (id) => await Repository.delete(id),
 }
 
-export default Country
+export default Customer

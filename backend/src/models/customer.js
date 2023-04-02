@@ -3,7 +3,7 @@ import PostgresSequelize from '../connector/postgres/index.js'
 
 import CountryModel from './country.js'
 
-const Model = PostgresSequelize.define('users', {
+const Model = PostgresSequelize.define('customers', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,

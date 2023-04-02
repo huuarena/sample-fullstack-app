@@ -1,39 +1,18 @@
-import Model from '../models/country.js'
+import Model from '../models/customer.js'
+import CountryModel from '../models/country.js'
+import { Op } from 'sequelize'
 import ErrorCodes from '../constants/errorCodes.js'
 import generatePagination from '../helpers/generatePagination.js'
-import { Op } from 'sequelize'
 
-const getAll = async (where) => {
-  let items = [],
-    page = 1
+const { JWT_SECRET, JWT_EXPIRATION } = process.env
 
-  let _where = where || {}
-
-  const count = await Model.count({ where: _where })
-
-  while (page >= 1) {
-    let filter = {
-      where: _where,
-      limit: 100,
-      offset: (page - 1) * 100,
-      order: [['updatedAt', 'DESC']],
-    }
-
-    let res = await Model.findAll(filter)
-
-    items = items.concat(res)
-
-    page = items.length >= count ? -1 : page + 1
-  }
-
-  return items.map((item) => item.toJSON())
-}
+const include = [{ model: CountryModel, as: 'country' }]
 
 const count = async (where) => {
   return await Model.count(where)
 }
 
-const find = async ({ page, limit, where, search }) => {
+const find = async ({ page, limit, where, search, country, gender }) => {
   let _page = page >= 1 ? page : 1
   let _limit = limit >= 1 && limit <= 100 ? limit : 20
 
@@ -41,8 +20,27 @@ const find = async ({ page, limit, where, search }) => {
   if (search) {
     _where = {
       ..._where,
-      name: { [Op.iLike]: `%${search}%` },
+      [Op.or]: [
+        {
+          firstName: { [Op.iLike]: `%${search}%` },
+        },
+        {
+          lastName: { [Op.iLike]: `%${search}%` },
+        },
+        {
+          email: { [Op.iLike]: `%${search}%` },
+        },
+        {
+          phone: { [Op.iLike]: `%${search}%` },
+        },
+      ],
     }
+  }
+  if (country) {
+    _where = { ..._where, countryId: country }
+  }
+  if ('' + gender === 'true' || '' + gender === 'false') {
+    _where = { ..._where, gender }
   }
 
   let filter = {
@@ -50,6 +48,7 @@ const find = async ({ page, limit, where, search }) => {
     limit: _limit,
     offset: (_page - 1) * _limit,
     order: [['updatedAt', 'DESC']],
+    include,
   }
 
   const count = await Model.count({ where: _where })
@@ -62,7 +61,7 @@ const find = async ({ page, limit, where, search }) => {
 }
 
 const findById = async (id) => {
-  const entry = await Model.findOne({ where: { id } })
+  const entry = await Model.findOne({ where: { id }, include })
   if (!entry) {
     throw new Error(ErrorCodes.NOT_FOUND)
   }
@@ -77,9 +76,13 @@ const create = async (data) => {
 }
 
 const update = async (id, data) => {
-  const updated = await Model.update(data, { where: { id }, returning: true, plain: true })
+  const updated = await Model.update(data, {
+    where: { id },
+    returning: true,
+    plain: true,
+  })
 
-  return updated[1].toJSON()
+  return await findById(id)
 }
 
 const _delete = async (id) => {
@@ -87,7 +90,6 @@ const _delete = async (id) => {
 }
 
 export default {
-  getAll,
   count,
   find,
   findById,

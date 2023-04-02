@@ -2,7 +2,7 @@ import { LegacyStack } from '@shopify/polaris'
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/Header'
 import { useParams } from 'react-router-dom'
-import CountryApi from '../../apis/country'
+import CustomerApi from '../../apis/customer'
 import CreateForm from './CreateForm'
 
 function DetailPage(props) {
@@ -10,28 +10,31 @@ function DetailPage(props) {
 
   let { id } = useParams()
 
-  const [country, setCountry] = useState(null)
+  const [customer, setCustomer] = useState(null)
 
-  const getCountry = async () => {
+  const getCustomer = async () => {
     try {
-      let res = await CountryApi.findById(id)
+      let res = await CustomerApi.findById(id)
       if (!res.success) throw res.error
 
-      setCountry(res.data)
+      setCustomer(res.data)
     } catch (error) {
       actions.showNotify({ message: error.message, error: true })
     }
   }
 
   useEffect(() => {
-    getCountry()
+    getCustomer()
   }, [])
 
   return (
     <LegacyStack vertical alignment="fill">
-      <Header title={country?.name || 'loading...'} onBack={() => props.navigate('/countries')} />
+      <Header
+        title={customer?.fullName || 'loading...'}
+        onBack={() => props.navigate('/customers')}
+      />
 
-      {country && <CreateForm {...props} created={country} />}
+      {customer && <CreateForm {...props} created={customer} />}
     </LegacyStack>
   )
 }

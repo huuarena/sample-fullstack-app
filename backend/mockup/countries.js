@@ -301,11 +301,5 @@ let countries = [
   },
 ]
 
-let _countries = []
-countries.forEach((item) =>
-  _countries.find((_item) => _item.name === item.name) ? null : _countries.push(item)
-)
-countries = _countries
-
 window.data = window.data || {}
 window.data.countries = countries

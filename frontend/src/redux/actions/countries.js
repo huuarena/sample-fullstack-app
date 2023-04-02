@@ -9,12 +9,10 @@ export const setCountries = async (dispatch, data) => {
   }
 }
 
-export const getCountries = async (dispatch, query, setSearchParams) => {
+export const getCountries = async (dispatch) => {
   try {
-    let res = await CountryApi.find(query)
+    let res = await CountryApi.getAll()
     if (!res.success) throw res.error
-
-    setSearchParams(query)
 
     return dispatch(slices.countries.actions.setData(res.data))
   } catch (error) {

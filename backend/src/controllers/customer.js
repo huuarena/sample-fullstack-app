@@ -1,22 +1,13 @@
+import ErrorCodes from '../constants/errorCodes.js'
 import ResponseHandler from '../helpers/responseHandler.js'
-import Country from '../middlewares/country.js'
+import Customer from '../middlewares/customer.js'
 
 export default {
-  getAll: async (req, res) => {
-    try {
-      const data = await Country.getAll()
-
-      return ResponseHandler.success(res, data)
-    } catch (error) {
-      return ResponseHandler.error(res, error)
-    }
-  },
-
   count: async (req, res) => {
     try {
       let where = JSON.parse(req.query.where || '{}')
 
-      const data = await Country.count(where)
+      const data = await Customer.count(where)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -29,7 +20,7 @@ export default {
       let filter = { ...req.query }
       filter.where = filter.where ? JSON.parse(filter.where) : {}
 
-      const data = await Country.find(filter)
+      const data = await Customer.find(filter)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -41,7 +32,7 @@ export default {
     try {
       const { id } = req.params
 
-      const data = await Country.findById(id)
+      const data = await Customer.findById(id)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -51,7 +42,7 @@ export default {
 
   create: async (req, res) => {
     try {
-      const data = await Country.create(req.body)
+      const data = await Customer.create(req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -63,7 +54,7 @@ export default {
     try {
       const { id } = req.params
 
-      const data = await Country.update(id, req.body)
+      const data = await Customer.update(id, req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {
@@ -75,7 +66,7 @@ export default {
     try {
       const { id } = req.params
 
-      await Country.delete(id)
+      await Customer.delete(id)
 
       return ResponseHandler.success(res)
     } catch (error) {

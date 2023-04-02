@@ -1,14 +1,12 @@
 import Home from './pages/Home'
 
-import Product from './pages/Products'
-import ProductNew from './pages/Products/new'
-import ProductDetail from './pages/Products/[id]'
-
 import Country from './pages/Countries'
 import CountryNew from './pages/Countries/new'
 import CountryDetail from './pages/Countries/[id]'
 
-import { HomeMinor, ProductsMinor } from '@shopify/polaris-icons'
+import Customer from './pages/Customers'
+import CustomerNew from './pages/Customers/new'
+import CustomerDetail from './pages/Customers/[id]'
 
 export default [
   {
@@ -16,7 +14,6 @@ export default [
     title: 'Home',
     exact: true,
     component: Home,
-    icon: HomeMinor,
     childrens: [],
   },
   {
@@ -24,14 +21,12 @@ export default [
     title: 'Countries',
     exact: true,
     component: Country,
-    icon: ProductsMinor,
     childrens: [
       {
         path: '/countries/new',
         title: 'New country',
         exact: true,
         component: CountryNew,
-        icon: undefined,
         childrens: [],
       },
       {
@@ -39,32 +34,28 @@ export default [
         title: 'Edit country',
         exact: true,
         component: CountryDetail,
-        icon: undefined,
         childrens: [],
       },
     ],
   },
   {
-    path: '/products',
-    title: 'Products',
+    path: '/customers',
+    title: 'Customers',
     exact: true,
-    component: Product,
-    icon: ProductsMinor,
+    component: Customer,
     childrens: [
       {
-        path: '/products/new',
-        title: 'New product',
+        path: '/customers/new',
+        title: 'New customer',
         exact: true,
-        component: ProductNew,
-        icon: undefined,
+        component: CustomerNew,
         childrens: [],
       },
       {
-        path: '/products/:id',
-        title: 'Edit product',
+        path: '/customers/:id',
+        title: 'Edit customer',
         exact: true,
-        component: ProductDetail,
-        icon: undefined,
+        component: CustomerDetail,
         childrens: [],
       },
     ],

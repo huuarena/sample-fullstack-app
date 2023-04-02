@@ -1,6 +1,7 @@
 import apiCaller from '../helpers/apiCaller.js'
 
 const CountryApi = {
+  getAll: async () => await apiCaller(`countries/all`),
   count: async () => await apiCaller(`countries/count`),
   find: async (query) => await apiCaller(`countries?${query}`),
   findById: async (id) => await apiCaller(`countries/${id}`),

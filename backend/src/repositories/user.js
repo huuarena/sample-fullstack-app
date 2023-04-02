@@ -63,33 +63,26 @@ const count = async (where) => {
   return await Model.count(where)
 }
 
-const find = async ({ page, limit, where, keyword, country, gender }) => {
+const find = async ({ page, limit, where, search, country, gender }) => {
   let _page = page >= 1 ? page : 1
   let _limit = limit >= 1 && limit <= 100 ? limit : 20
-  let _where = where || {}
 
-  if (keyword) {
+  let _where = where || {}
+  if (search) {
     _where = {
+      ..._where,
       [Op.or]: [
         {
-          firstName: {
-            [Op.like]: `%${keyword}%`,
-          },
+          firstName: { [Op.iLike]: `%${search}%` },
         },
         {
-          lastName: {
-            [Op.like]: `%${keyword}%`,
-          },
+          lastName: { [Op.iLike]: `%${search}%` },
         },
         {
-          email: {
-            [Op.like]: `%${keyword}%`,
-          },
+          email: { [Op.iLike]: `%${search}%` },
         },
         {
-          phone: {
-            [Op.like]: `%${keyword}%`,
-          },
+          phone: { [Op.iLike]: `%${search}%` },
         },
       ],
     }
