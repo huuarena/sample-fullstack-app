@@ -1,15 +1,25 @@
 import Model from '../models/country.js'
 import ErrorCodes from '../constants/errorCodes.js'
 import generatePagination from '../helpers/generatePagination.js'
+import { Op } from 'sequelize'
 
 const count = async (where) => {
   return await Model.count(where)
 }
 
-const find = async ({ page, limit, where }) => {
+const find = async ({ page, limit, where, search }) => {
   let _page = page >= 1 ? page : 1
-  let _limit = limit >= 1 && limit <= 100 ? limit : 25
+  let _limit = limit >= 1 && limit <= 100 ? limit : 20
+
   let _where = where || {}
+  if (search) {
+    _where = {
+      ..._where,
+      name: {
+        [Op.iLike]: `%${search}%`,
+      },
+    }
+  }
 
   let filter = {
     where: _where,

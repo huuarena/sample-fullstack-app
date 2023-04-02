@@ -65,7 +65,7 @@ const count = async (where) => {
 
 const find = async ({ page, limit, where, keyword, country, gender }) => {
   let _page = page >= 1 ? page : 1
-  let _limit = limit >= 1 && limit <= 100 ? limit : 25
+  let _limit = limit >= 1 && limit <= 100 ? limit : 20
   let _where = where || {}
 
   if (keyword) {

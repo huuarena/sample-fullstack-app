@@ -12,14 +12,14 @@ const initCountries = async () => {
   try {
     console.log(`👉 Init countries`)
 
-    let count = await apiCaller({ endpoint: 'countries/count' }).then((res) => res.data)
-    if (count > 0) {
-      console.log(`\t Countries already exist!`)
-      return
-    }
+    // let count = await apiCaller({ endpoint: 'countries/count' }).then((res) => res.data)
+    // if (count > 0) {
+    //   console.log(`\t Countries already exist!`)
+    //   return
+    // }
 
     for (let i = 0, leng = window.data.countries.length; i < leng; i++) {
-      apiCaller({ endpoint: 'countries', method: 'POST', data: countries[i] })
+      await apiCaller({ endpoint: 'countries', method: 'POST', data: countries[i] })
         .then((res) => console.log(`\t [${i + 1}/${leng}] country created`))
         .catch((err) => console.log(`\t [${i + 1}/${leng}] create country failed: ${err.message}`))
     }
@@ -32,11 +32,11 @@ const initUsers = async () => {
   try {
     console.log(`👉 Init users`)
 
-    let count = await apiCaller({ endpoint: 'users/count' }).then((res) => res.data)
-    if (count > 0) {
-      console.log(`\t Countries already exist!`)
-      return
-    }
+    // let count = await apiCaller({ endpoint: 'users/count' }).then((res) => res.data)
+    // if (count > 0) {
+    //   console.log(`\t Countries already exist!`)
+    //   return
+    // }
 
     let countries = await apiCaller({ endpoint: 'countries' }).then((res) => res.data)
     countries = countries.items

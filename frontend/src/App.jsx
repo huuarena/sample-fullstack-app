@@ -1,21 +1,33 @@
 import React, { useEffect } from 'react'
-import { Page } from '@shopify/polaris'
+import { Page, Toast } from '@shopify/polaris'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import routes from './routes'
+import LoadingPage from './components/LoadingPage'
 
 function App(props) {
-  const { actions } = props
-
-  useEffect(() => console.log('store :>> ', props), [props])
+  const { actions, appLoading, notify } = props
 
   useEffect(() => {
-    actions.getCountries()
-  }, [])
+    console.log(`redux`)
+    Object.keys(props).forEach((key) => console.log(` | ${key} :`, props[key]))
+  }, [props])
+
+  const toastMarkup = notify?.show && (
+    <Toast
+      error={notify.error}
+      content={notify.message}
+      onDismiss={() => {
+        if (notify.onDismiss) notify.onDismiss()
+        actions.hideNotify()
+      }}
+      duration={5000}
+    />
+  )
 
   return (
     <Layout {...props}>
-      <Page fullWidth={true}>
+      <Page>
         <Routes>
           {/* Parent routes */}
           {routes.map((item, index) => (
@@ -32,6 +44,10 @@ function App(props) {
           )}
         </Routes>
       </Page>
+
+      {appLoading.loading && !appLoading.action && <LoadingPage />}
+
+      {toastMarkup}
     </Layout>
   )
 }

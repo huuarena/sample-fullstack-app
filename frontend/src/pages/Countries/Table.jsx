@@ -1,24 +1,47 @@
 import PropTypes from 'prop-types'
-import { ActionList, Button, DataTable, Popover, LegacyStack } from '@shopify/polaris'
-import { MobileVerticalDotsMajor, ImagesMajor } from '@shopify/polaris-icons'
-import { useState } from 'react'
+import {
+  ActionList,
+  Button,
+  DataTable,
+  Popover,
+  LegacyStack,
+  LegacyCard,
+  Pagination,
+  Select,
+} from '@shopify/polaris'
+import { MobileVerticalDotsMajor } from '@shopify/polaris-icons'
+import qs from 'query-string'
+import { useEffect, useState } from 'react'
+import CountryApi from '../../apis/country'
+import ConfirmModal from '../../components/ConfirmModal'
+import Search from './Search'
 
 Table.propTypes = {
-  items: PropTypes.array,
+  // ...appProps,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
+  onChangePage: PropTypes.func,
+  onChangeLimit: PropTypes.func,
+  search: PropTypes.string,
+  onSearch: PropTypes.func,
 }
 
 Table.defaultProps = {
-  items: undefined,
   onEdit: () => null,
   onDelete: () => null,
+  onChangePage: () => null,
+  onChangeLimit: () => null,
+  search: '',
+  onSearch: () => null,
 }
 
 function Table(props) {
-  const { items, onEdit, onDelete } = props
+  const { actions, countries, onEdit, onDelete, onChangePage, onChangeLimit, onSearch, search } =
+    props
+  const { items, page, limit, totalPages, totalItems } = countries || {}
 
   const [selected, setSelected] = useState(null)
+  const [deleted, setDeleted] = useState(null)
 
   let rows = []
   if (items?.length > 0) {
@@ -44,11 +67,11 @@ function Table(props) {
             items={[
               {
                 content: 'Edit',
-                onAction: () => onEdit(item) & setSelected(null),
+                onAction: () => setSelected(null) & onEdit(item),
               },
               {
                 content: 'Delete',
-                onAction: () => onDelete(item) & setSelected(null),
+                onAction: () => setSelected(null) & setDeleted(item),
               },
             ]}
           />
@@ -58,12 +81,58 @@ function Table(props) {
   }
 
   return (
-    <DataTable
-      headings={['No.', 'Name', 'Actions']}
-      columnContentTypes={['text', 'text', 'numeric']}
-      rows={rows}
-      footerContent={items ? (items?.length > 0 ? undefined : 'Have no data') : 'loading..'}
-    />
+    <LegacyStack vertical alignment="fill">
+      <LegacyCard sectioned>
+        <Search value={search} onChange={onSearch} />
+      </LegacyCard>
+
+      <div>Total items: {totalItems || 'loading...'}</div>
+
+      <LegacyCard>
+        <DataTable
+          headings={['No.', 'Name', 'Actions']}
+          columnContentTypes={['text', 'text', 'numeric']}
+          rows={rows}
+          footerContent={items ? (items?.length > 0 ? undefined : 'Have no data') : 'loading..'}
+        />
+
+        <LegacyCard.Section>
+          <LegacyStack distribution="center">
+            <Pagination
+              label={`${page} of ${totalPages}`}
+              hasPrevious={page > 1}
+              onPrevious={() => onChangePage(page - 1)}
+              hasNext={page < totalPages}
+              onNext={() => onChangePage(page + 1)}
+            />
+            <Select
+              options={[10, 20, 50, 100].map((item) => ({ label: '' + item, value: '' + item }))}
+              value={'' + limit}
+              onChange={onChangeLimit}
+            />
+          </LegacyStack>
+        </LegacyCard.Section>
+      </LegacyCard>
+
+      {deleted && (
+        <ConfirmModal
+          title="Delete confirmation"
+          content="Are your sure want to delete, this cannot be undone?"
+          onClose={() => setDeleted(null)}
+          secondaryActions={[
+            {
+              content: 'Discard',
+              onAction: () => setDeleted(null),
+            },
+            {
+              content: 'Delete',
+              onAction: () => onDelete(deleted) & setDeleted(null),
+              destructive: true,
+            },
+          ]}
+        />
+      )}
+    </LegacyStack>
   )
 }
 
