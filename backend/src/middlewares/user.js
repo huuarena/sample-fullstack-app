@@ -1,4 +1,3 @@
-import CloudinaryUploader from '../connector/cloudinary/index.js'
 import Repository from './../repositories/user.js'
 
 const User = {

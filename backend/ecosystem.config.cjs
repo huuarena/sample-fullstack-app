@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const {
   PORT,
+  HOST,
 
   POSTGRES_USER,
   POSTGRES_PWD,
@@ -27,6 +28,7 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production',
         PORT,
+        HOST,
 
         POSTGRES_USER,
         POSTGRES_PWD,

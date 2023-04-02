@@ -12,7 +12,7 @@ cloudinary.config({
   api_secret: CLOUDINARY_SECRET_KEY,
 })
 
-const CloudinaryUploader = {
+const CloudinaryUpload = {
   upload: async (file) => {
     console.log(`cloudinary uploading...`)
     return await cloudinary.v2.uploader
@@ -24,4 +24,4 @@ const CloudinaryUploader = {
   },
 }
 
-export default CloudinaryUploader
+export default CloudinaryUpload

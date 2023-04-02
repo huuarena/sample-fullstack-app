@@ -3,7 +3,6 @@ build
 coverage
 dist
 public
-.vscode
 
 # Ignore all HTML files:
 # *.html

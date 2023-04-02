@@ -29,16 +29,10 @@ app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'pug')
 
 app.use(cors())
-app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
-
-// parse application/json
-app.use(bodyParser.json())
+app.use(logger('dev'))
 
 app.use(
   NODE_ENV === 'development'
@@ -73,8 +67,6 @@ app.use(function (err, req, res, next) {
   res.render('error')
 })
 
-app.listen(PORT, () => {
-  console.log(`🚀 App listening on port ${PORT}`)
-})
+app.listen(PORT, () => console.log(`🚀 App listening on port ${PORT}`))
 
 export default app
