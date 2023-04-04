@@ -10,11 +10,13 @@ function App(props) {
 
   useEffect(() => {
     console.log('redux :>> ', props)
+  }, [props])
 
+  useEffect(() => {
     if (!props.countries?.length) {
       actions.getCountries()
     }
-  }, [props])
+  }, [])
 
   const toastMarkup = notify?.show && (
     <Toast
